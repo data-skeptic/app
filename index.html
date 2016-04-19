@@ -3,6 +3,8 @@
     <title>Data Skeptic Home Sales Data viewer</title>
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="common.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.25.8/js/jquery.tablesorter.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
 <body>
@@ -15,8 +17,42 @@
       <input id='zipcode' />
       <button id='btnSearch'>Search</button>
     </div>
+    <div id='res'></div>
     <div id='results'>
+      <table id="tblResult" class="tablesorter">
+        <thead>
+          <tr>
+            <th>X</th>
+            <th>y</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>3</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </body>
+<script>
+$(document).ready(function() {
+    $('#btnSearch').click(function () {
+      url = 'https://home-sales-data-api.herokuapp.com/api/property/'
+      $.get( "ajax/test.html", function( data ) {
+        $( "#res" ).html( data );
+        alert( "Load was performed." );
+      });
+      // look up with api
+      // display in table
+      // trulia stuff in c3
+    })
+    $("#tblResult").tablesorter();
+});
+</script>
 </html>
