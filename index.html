@@ -4,7 +4,10 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="common.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.25.8/js/jquery.tablesorter.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.js" charset="utf-8"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
 <body>
@@ -16,53 +19,129 @@
       Zipcode:
       <input id='zipcode' />
       <button id='btnSearch'>Search</button>
+      <br/><br/>
     </div>
     <div id='res'></div>
     <div id='results'>
-      <table id="tblResult" class="tablesorter">
-        <thead>
+      <div id='tbl-layout'>
+        <table id="tblResult" class="tablesorter">
+          <thead>
+            <tr>
+              <th>Last updated</th>
+              <th>Listing Type</th>
+              <th>Bedrooms</th>
+              <th>Bathrooms</th>
+              <th>Sqft</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+          </tbody>
+        </table>
+      </div>
+      <div id='summary-layout'>
+        <table>
           <tr>
-            <th>X</th>
-            <th>y</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>2</td>
+            <td>Mean price:</td>
+            <td><span id='spn-mean-price'></span></td>
           </tr>
           <tr>
-            <td>4</td>
-            <td>3</td>
+            <td>Mean sqft:</td>
+            <td><span id='spn-mean-sqft'></span></td>
           </tr>
-        </tbody>
-      </table>
+        </table>
+      </div>
+      <div id='trulia-layout'>
+        <div id='trend'></div>
+      </div>
+      <div id='map-layout'>
+      </div>
     </div>
   </div>
 </body>
 <script>
 $(document).ready(function() {
-    $('#btnSearch').click(function () {
-      url = 'https://home-sales-data-api.herokuapp.com/api/property/'
-      console.log(url)
-      $.ajax({
-          type: "GET",
-          url: url,
-          success: function (data) {
-            console.log(data)
-             // console.log(JSON.stringify(data));
-          },
-          error: function (xhr, ajaxOptions, thrownError) {
-            alert(xhr.status);
-            alert(thrownError);
-          }
-      })
 
-      // look up with api
-      // display in table
-      // trulia stuff in c3
+    var pstate = localStorage.getItem("state");
+    var zip = "";
+    if (pstate != null) {
+      state = JSON.parse(pstate)
+      zip = state['zip']
+    }
+    $("#zipcode").val(zip)
+
+    $('#btnSearch').click(function () {
+      var zip = $("#zipcode").val()
+      if (zip == "") {
+        alert("Please enter a zipcode")
+      }
+      else {
+        state['zip'] = zip
+        localStorage.setItem("state", JSON.stringify(state))
+        url = 'https://home-sales-data-api.herokuapp.com/api/property/'
+        data = '[{"id":1,"upload_timestamp":"2016-04-05T02:46:50.380670Z","listing_timestamp":"2016-03-31T21:09:00Z","listing_type":"F","price":123456.0,"bedrooms":3.0,"bathrooms":2.0,"car_spaces":1.0,"building_size":1400.0,"land_size":2000.0,"size_units":"M","raw_address":"123 Main St.","geocoded_address":"123 Main St, Schenevus, NY 12155, USA","features":[]},{"id":2,"upload_timestamp":"2016-04-05T02:57:20.785874Z","listing_timestamp":"2016-04-05T02:57:20.059246Z","listing_type":"F","price":1.0,"bedrooms":0.0,"bathrooms":0.0,"car_spaces":null,"building_size":10.0,"land_size":20.0,"size_units":"M","raw_address":"123 Test Ave","geocoded_address":"123 Test Rd, Richmond, IN 47374, USA","features":[]},{"id":3,"upload_timestamp":"2016-04-05T03:08:21.202776Z","listing_timestamp":"2016-04-05T03:08:09.140107Z","listing_type":"F","price":1.0,"bedrooms":0.0,"bathrooms":0.0,"car_spaces":null,"building_size":10.0,"land_size":20.0,"size_units":"M","raw_address":"123 Test Ave","geocoded_address":"123 Test Rd, Richmond, IN 47374, USA","features":[]}]'
+        /*
+        // look up with api
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+              console.log(data)
+               // console.log(JSON.stringify(data));
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+              alert(xhr.status);
+              alert(thrownError);
+            }
+        })
+        */
+        var bdy = ""
+        var plist = JSON.parse(data)
+        var agg_sqft = 0;
+        var agg_price = 0;
+        var c = 0;
+        $.each(plist, function(index, prop) {
+          if (prop['geocoded_address'].indexOf(zip) > 0) {
+            bdy += "<tr>"
+            bdy += "<td>" + prop['upload_timestamp'] + "</td>"
+            bdy += "<td>" + prop['listing_type'] + "</td>"
+            bdy += "<td>" + prop['bedrooms'] + "</td>"
+            bdy += "<td>" + prop['bathrooms'] + "</td>"
+            bdy += "<td>" + prop['building_size'] + "</td>"
+            bdy += "<td>" + prop['geocoded_address'] + "</td>"
+            agg_sqft += (prop['building_size'])
+            bdy += "</tr>"
+            c += 1
+          }
+        })
+        $("#tbody").html(bdy)
+        console.log(agg_sqft)
+        $("#spn-mean-sqft").html(agg_sqft / c)
+        // trulia stuff in c3
+        var containerId = 'trend'
+        var labels = ['2016-01-01', '2016-01-02', '2016-01-03']
+        var values = [100, 200, 150]
+        labels.unshift('x')
+        values.unshift('data1')
+        var chart = c3.generate({
+          bindto: containerId,
+            data: {
+                x: 'x',
+                columns: [
+                    labels,
+                    values
+                ]
+            },
+            axis: {
+                x: {
+                    type: 'timeseries',
+                    tick: {format: '%Y-%m-%d'}
+                }
+            }
+        });
+      }
+      $("#tblResult").tablesorter();
     })
-    $("#tblResult").tablesorter();
 });
 </script>
 </html>
