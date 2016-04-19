@@ -44,7 +44,7 @@
 $(document).ready(function() {
     $('#btnSearch').click(function () {
       url = 'https://home-sales-data-api.herokuapp.com/api/property/'
-      $.get( "ajax/test.html", function( data ) {
+      $.get(url, function( data ) {
         $( "#res" ).html( data );
         alert( "Load was performed." );
       });
