@@ -68,6 +68,9 @@ $(document).ready(function() {
       state = JSON.parse(pstate)
       zip = state['zip']
     }
+    else {
+      state = {}
+    }
     $("#zipcode").val(zip)
 
     $('#btnSearch').click(function () {
