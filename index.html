@@ -44,10 +44,20 @@
 $(document).ready(function() {
     $('#btnSearch').click(function () {
       url = 'https://home-sales-data-api.herokuapp.com/api/property/'
-      $.get(url, function( data ) {
-        $( "#res" ).html( data );
-        alert( "Load was performed." );
-      });
+      console.log(url)
+      $.ajax({
+          type: "GET",
+          url: url,
+          success: function (data) {
+            console.log(data)
+             // console.log(JSON.stringify(data));
+          },
+          error: function (xhr, ajaxOptions, thrownError) {
+            alert(xhr.status);
+            alert(thrownError);
+          }
+      })
+
       // look up with api
       // display in table
       // trulia stuff in c3
