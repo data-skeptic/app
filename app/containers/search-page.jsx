@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { propertySearch } from '../actions/actions'
 
-import App from '../components/app'
+import Search from '../components/searching'
 
 const mapStateToProps = (state) => {
     return state.search
@@ -18,6 +18,6 @@ const mapDispatchToProps = (dispatch) => {
 
 const SearchPage = connect(
     mapStateToProps,
-    mapDispatchToProps)(App)
+    mapDispatchToProps)(Search)
 
 export default SearchPage
