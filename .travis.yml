@@ -4,24 +4,23 @@ node_js:
 script:
     - "npm run build" # no test for now, just building okay is fine
 deploy:
-    provider: s3
-    access_key_id: $S3_ID
-    secret_access_key: $S3_SECRET
-    bucket: home-app-dev.dataskeptic.com
-    endpoint: http://home-app-dev.dataskeptic.com.s3-website-us-east-1.amazonaws.com
-    region: us-east-1
-    skip_cleanup: true
-    local-dir: __build__
-    on:
-        branch: develop
-deploy:
-    provider: s3
-    access_key_id: $S3_ID
-    secret_access_key: $S3_SECRET
-    bucket: home-app.dataskeptic.com
-    endpoint: http://home-app.dataskeptic.com.s3-website-us-east-1.amazonaws.com
-    region: us-east-1
-    skip_cleanup: true
-    local-dir: __build__
-    on:
-        branch: master
+    - provider: s3
+      access_key_id: $S3_ID
+      secret_access_key: $S3_SECRET
+      bucket: home-app-dev.dataskeptic.com
+      endpoint: http://home-app-dev.dataskeptic.com.s3-website-us-east-1.amazonaws.com
+      region: us-east-1
+      skip_cleanup: true
+      local-dir: __build__
+      on:
+          branch: develop
+    - provider: s3
+      access_key_id: $S3_ID
+      secret_access_key: $S3_SECRET
+      bucket: home-app.dataskeptic.com
+      endpoint: http://home-app.dataskeptic.com.s3-website-us-east-1.amazonaws.com
+      region: us-east-1
+      skip_cleanup: true
+      local-dir: __build__
+      on:
+          branch: master
