@@ -5,7 +5,8 @@
   "main": "main.jsx",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server --progress --colors --port 8091 --inline --content-base . --history-api-fallback"
+    "dev": "webpack-dev-server --progress --colors --port 8091 --inline --content-base . --history-api-fallback",
+    "build": "rm __build__/* && webpack"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,10 @@
   "dependencies": {
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
-    "redux": "^3.4.0"
+    "react-redux": "^4.4.5",
+    "react-router": "^2.3.0",
+    "redux": "^3.4.0",
+    "redux-thunk": "^2.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.7.6",
@@ -31,11 +35,10 @@
     "browser-sync": "^2.12.3",
     "css-loader": "^0.23.1",
     "extract-text-webpack-plugin": "^1.0.1",
+    "html-webpack-plugin": "^2.16.0",
     "jsx-loader": "^0.13.2",
     "node-sass": "^3.4.2",
     "path": "^0.12.7",
-    "react-redux": "^4.4.5",
-    "redux-thunk": "^2.0.1",
     "sass-loader": "^3.2.0",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.0",

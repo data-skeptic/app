@@ -2,7 +2,7 @@ import React from 'react'
 import HomeList from './home-list'
 import SearchBar from './search'
 
-export default class App extends React.Component {
+export default class Search extends React.Component {
     render() {
         return (
             <div className="app">

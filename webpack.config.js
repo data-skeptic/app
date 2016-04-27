@@ -1,14 +1,22 @@
 const path = require('path');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var pkg = require('./package.json');
+var webpack = require('webpack');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: './main.jsx',
+    entry: {
+        app: './main.jsx',
+        vendor: Object.keys(pkg.dependencies)
+    },
     output: {
         path: path.join(__dirname, '__build__'),
-        filename: 'bundle.js', //this is the default name, so you can skip it
-        //at this directory our bundle file will be available
-        //make sure port 8090 is used when launching webpack-dev-server
-        publicPath: '__build__'
+        filename: 'bundle-[chunkhash:6].js',
+        publicPath: '/'
+    },
+    devtool:'source-map',
+    devServer: {
+        contentBase: "__build__/"
     },
     historyApiFallback: true,
     module: {
@@ -31,6 +39,11 @@ module.exports = {
     plugins: [
         new ExtractTextPlugin('style.css', {
             allChunks: true
+        }),
+        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor-[chunkhash:6].js'),
+        new HtmlWebpackPlugin({
+            inject: false,
+            template: './index.html'
         })
     ],
     resolve: {
