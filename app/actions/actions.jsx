@@ -9,6 +9,7 @@ export const START_LOGIN = 'START_LOGIN';
 export const END_LOGIN = 'END_LOGIN';
 
 const BASE_URL = 'https://home-sales-data-api-dev.herokuapp.com/api'
+const AUTH_URL = 'https://home-sales-data-api-dev.herokuapp.com'
 
 function checkHttpStatus(response) {
     /**
@@ -25,6 +26,45 @@ function checkHttpStatus(response) {
     }
 }
 
+function refreshToken(token, callback, err) {
+    fetch(`${AUTH_URL}/token/refresh/`,
+          {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({token: token})
+          })
+          .then(checkHttpStatus)
+          .then(response => response.json())
+          .then(json => {
+              localStorage.setItem('token', json.token)
+              callback()
+          })
+          .catch( () => err() )
+}
+
+export function verifyToken(callback, err) {
+    var token = localStorage.getItem('token')
+    if (!token) {
+        //No token!
+        err()
+        return
+    }
+
+    // Check the token against the verify endpoint, refreshing it if needed
+    fetch(`${AUTH_URL}/token/verify/`,
+          {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({token: token})
+          })
+          .then(checkHttpStatus)
+          .then(callback)
+          .catch(() => refreshToken(token, callback, err))
+}
 
 export function propertySearch(searchTerm) {
     /**
@@ -69,6 +109,13 @@ export function getToken(username, password) {
               })
               .then(checkHttpStatus)
               .then(result => result.json())
-              .then(json => dispatch({type: END_LOGIN, data: json}))
+              .then(json => {
+                  localStorage.setItem('token', json.token)
+                  dispatch({type: END_LOGIN, data: json})
+              })
     }
+}
+
+export function loadProperty(id) {
+
 }
