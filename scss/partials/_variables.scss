@@ -1,0 +1,9 @@
+$variable_list: (
+    "sass", "lists", "are", "awesome"
+);
+
+@each $item in $variable_list {
+    .#{$item} {
+        content: 'neat-#{$item}';
+    }
+}
